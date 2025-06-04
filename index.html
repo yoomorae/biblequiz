@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>성경 구절 암기 게임</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 30px;
+      background-color: #f0f8ff;
+      color: #333;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .verse-box {
+      margin: 20px 0;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #2980b9;
+      color: white;
+      cursor: pointer;
+    }
+    input {
+      padding: 10px;
+      width: 80%;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>📖 성경 구절 암기 게임</h1>
+  <div>
+    <button onclick="startGame('fill')">빈칸 채우기</button>
+    <button onclick="startGame('order')">순서 맞추기</button>
+    <button onclick="startGame('typing')">타자 암기</button>
+  </div>
+  <div class="verse-box" id="gameBox"></div>
+
+  <script>
+    const verses = [
+      {
+        reference: "디모데전서 1:15",
+        text: "미쁘다 모든 사람이 받을 만한 이 말이여 그리스도 예수께서 죄인을 구원하시려고 세상에 임하셨다 하였도다 죄인 중에 내가 괴수니라"
+      },
+      {
+        reference: "시편 42:1",
+        text: "하나님이여 사슴이 시냇물을 찾기에 갈급함 같이 내 영혼이 주를 찾기에 갈급하니이다"
+      },
+      {
+        reference: "시편 42:2",
+        text: "내 영혼이 하나님 곧 살아 계시는 하나님을 갈망하나니 내가 어느 때에 나아가서 하나님의 얼굴을 뵈올까"
+      },
+      {
+        reference: "시편 42:3",
+        text: "사람들이 종일 내게 하는 말이 네 하나님이 어디 있느뇨 하오니 내 눈물이 주야로 내 음식이 되었도다"
+      }
+    ];
+
+    function startGame(mode) {
+      const verse = verses[Math.floor(Math.random() * verses.length)];
+      const gameBox = document.getElementById('gameBox');
+      if (mode === 'fill') {
+        const words = verse.text.split(' ');
+        const i = Math.floor(Math.random() * words.length);
+        const answer = words[i];
+        words[i] = '____';
+        gameBox.innerHTML = `
+          <p><strong>${verse.reference}</strong></p>
+          <p>${words.join(' ')}</p>
+          <input id="answerInput" placeholder="빈칸에 들어갈 단어는?"/>
+          <button onclick="checkAnswer('${answer}')">제출</button>
+        `;
+      } else if (mode === 'order') {
+        const words = verse.text.split(' ');
+        const shuffled = [...words].sort(() => 0.5 - Math.random());
+        gameBox.innerHTML = `
+          <p><strong>${verse.reference}</strong></p>
+          <p>단어 순서를 올바르게 입력하세요:</p>
+          <p>${shuffled.join(' / ')}</p>
+          <input id="answerInput" placeholder="단어들을 띄어쓰기 기준으로 입력하세요"/>
+          <button onclick="checkAnswer('${verse.text}')">제출</button>
+        `;
+      } else if (mode === 'typing') {
+        gameBox.innerHTML = `
+          <p><strong>${verse.reference}</strong></p>
+          <p>${verse.text}</p>
+        `;
+        setTimeout(() => {
+          gameBox.innerHTML = `
+            <p><strong>${verse.reference}</strong></p>
+            <input id="answerInput" placeholder="구절을 기억하여 입력하세요"/>
+            <button onclick="checkAnswer('${verse.text}')">제출</button>
+          `;
+        }, 5000);
+      }
+    }
+
+    function checkAnswer(correct) {
+      const userInput = document.getElementById('answerInput').value.trim();
+      const gameBox = document.getElementById('gameBox');
+      if (userInput === correct) {
+        gameBox.innerHTML += `<p style='color:green;'>✅ 정답입니다!</p>`;
+      } else {
+        gameBox.innerHTML += `<p style='color:red;'>❌ 오답입니다. 정답: ${correct}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
